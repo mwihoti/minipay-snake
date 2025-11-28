@@ -1,0 +1,88 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Press Start 2P', cursive, system-ui;
+  background: linear-gradient(135deg, #87ceeb 0%, #90ee90 50%, #4a7c2b 100%);
+  overflow: hidden;
+}
+
+canvas {
+  display: block;
+  max-width: 100vw;
+  max-height: 100vh;
+}
+
+/* Smooth retro pixel aesthetic */
+.game-container {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+/* Park UI elements */
+.wooden-sign {
+  background: linear-gradient(135deg, #8b6f47 0%, #a0826d 100%);
+  border: 3px solid #5c4033;
+  border-radius: 8px;
+  padding: 12px 16px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.3), 0 4px 8px rgba(0,0,0,0.3);
+  text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+  color: #fffacd;
+}
+
+.park-bench {
+  background: linear-gradient(to bottom, #8b4513, #654321);
+  border-bottom: 3px solid #3e2723;
+  padding: 8px 12px;
+  border-radius: 4px 4px 8px 8px;
+}
+
+.sunset-filter {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(255, 107, 53, 0) 0%, rgba(139, 46, 115, 0.2) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Particles */
+.particle {
+  position: absolute;
+  pointer-events: none;
+}
+
+.leaf-particle {
+  opacity: 0.8;
+  font-size: 20px;
+  animation: fall 1s ease-in forwards;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(100px) rotateZ(360deg);
+    opacity: 0;
+  }
+}
+
+/* Responsive for mobile */
+@media (max-width: 640px) {
+  * {
+    font-size: 0.8rem;
+  }
+
+  .wooden-sign {
+    padding: 8px 12px;
+    border: 2px solid #5c4033;
+  }
+}
