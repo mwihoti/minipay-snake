@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -19,7 +19,7 @@ interface ICUSDToken is IERC20 {
  */
 contract SnakeGameRewards is Ownable, ReentrancyGuard {
     // Token address (cUSD on Celo Sepolia)
-    address public constant cUSD = 0x86a37b6Ca4f0123b643f785385Eb0860D5EE810d;
+    address public constant cUSD = 0x86A37B6CA4F0123b643F785385eb0860D5ee810d;
     
     // Game configuration
     uint256 public rewardPerPoint = 0.01 ether; // 0.01 cUSD per point
@@ -90,7 +90,7 @@ contract SnakeGameRewards is Ownable, ReentrancyGuard {
         _;
     }
     
-    constructor() {
+    constructor() Ownable() ReentrancyGuard() {
         // Create default lands
         createLand(LandType.PARK, "Sunny Park", "A beautiful sunny park with green grass", 0, 100); // Free
         createLand(LandType.FOREST, "Enchanted Forest", "A magical forest with tall trees", 10 ether, 150); // 10 cUSD, 1.5x multiplier
