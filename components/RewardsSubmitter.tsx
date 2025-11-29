@@ -31,13 +31,15 @@ export const RewardsSubmitter: React.FC<RewardsSubmitterProps> = ({ gameState, o
   // Calculate estimated reward
   useEffect(() => {
     if (gameState.gameOver) {
-      let reward = gameState.score * 0.01; // 0.01 cUSD per point
+      // Testnet: 0.009 cUSD per point (very small for testing)
+      // At 1000 points = 0.009 cUSD, which translates to 0.03 CELO level reward
+      let reward = gameState.score * 0.009;
       
       if (gameState.sunsetMode) {
         reward *= 1.5; // 50% bonus
       }
       
-      setEstimatedReward(Math.min(reward, 100)); // Max 100 cUSD
+      setEstimatedReward(Math.min(reward, 0.9)); // Max 0.9 cUSD for testnet
     }
   }, [gameState.gameOver, gameState.score, gameState.sunsetMode]);
 
@@ -81,42 +83,15 @@ export const RewardsSubmitter: React.FC<RewardsSubmitterProps> = ({ gameState, o
       setTimeout(() => {
         setSubmitted(false);
       }, 3000);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to submit score:', error);
-      alert('Error submitting score. Make sure contract is funded with cUSD.');
+      const errorMsg = error?.reason || error?.message || 'Unknown error';
+      alert(`❌ Error submitting score:\n${errorMsg}\n\nMake sure contract is funded with cUSD.`);
     } finally {
       setIsLoading(false);
     }
   };
 
-  return (
-    <>
-      {gameState.gameOver && isConnected && (
-        <div className="mt-4 bg-blue-500/20 border-2 border-blue-400 rounded-lg p-4">
-          <div className="text-white text-sm mb-3">
-            <div className="font-bold mb-2">💰 Play-to-Earn Rewards {isMiniPayApp && '(MiniPay)'}</div>
-            <div>
-              Base Reward: <span className="text-yellow-300">{(gameState.score / 100).toFixed(2)}</span> cUSD
-            </div>
-            {gameState.sunsetMode && (
-              <div>
-                Sunset Bonus: <span className="text-orange-300">+50%</span>
-              </div>
-            )}
-            <div className="border-t border-blue-300 mt-2 pt-2 font-bold">
-              Total Reward: <span className="text-green-300">${estimatedReward.toFixed(2)}</span> cUSD
-            </div>
-          </div>
-
-          <button
-            onClick={handleSubmitToBlockchain}
-            disabled={submitted || isLoading}
-            className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-500 text-white py-2 px-4 text-sm font-bold rounded transition"
-          >
-            {isLoading ? '⏳ SUBMITTING...' : submitted ? '✅ SUBMITTED!' : isMiniPayApp ? '🚀 CLAIM (MiniPay)' : '🚀 CLAIM REWARD ON CELO'}
-          </button>
-        </div>
-      )}
-    </>
-  );
+  // Disabled: Using only level-based CELO rewards (LevelMilestone component)
+  return null;
 };

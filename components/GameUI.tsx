@@ -6,6 +6,8 @@ import { getMiniPayAddress, getBalance, submitScore } from '@/lib/celoIntegratio
 import { WalletConnect } from './WalletConnect';
 import { LandsManager } from './LandsManager';
 import { RewardsSubmitter } from './RewardsSubmitter';
+import { LevelMilestone } from './LevelMilestone';
+import { PlayerStats } from './PlayerStats';
 
 interface GameUIProps {
   gameState: GameState;
@@ -21,18 +23,20 @@ export const GameUI: React.FC<GameUIProps> = ({ gameState, onReset, isConnected,
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  // Get MiniPay address on load
+  // Get MiniPay address on load and sync with connection status
   useEffect(() => {
     const initAddress = async () => {
-      const addr = await getMiniPayAddress();
-      setAddress(addr);
-      if (addr) {
-        const bal = await getBalance(addr, false);
-        setBalance(bal);
+      if (isConnected) {
+        const addr = await getMiniPayAddress();
+        setAddress(addr);
+        if (addr) {
+          const bal = await getBalance(addr, false);
+          setBalance(bal);
+        }
       }
     };
     initAddress();
-  }, []);
+  }, [isConnected]);
 
   const handleDirectionClick = (direction: 'up' | 'down' | 'left' | 'right') => {
     // Prevent 180-degree turns
@@ -85,11 +89,22 @@ export const GameUI: React.FC<GameUIProps> = ({ gameState, onReset, isConnected,
           </div>
         </div>
 
-        {/* Balance - MiniPay */}
+        {/* Balance & Actions - MiniPay */}
         {isConnected && address && (
-          <div className="wooden-sign text-right">
-            <div className="text-yellow-100 text-xs">cUSD Balance</div>
-            <div className="text-yellow-300 text-lg font-bold">${Number(balance).toFixed(2)}</div>
+          <div className="flex flex-col gap-2">
+            <div className="wooden-sign text-right">
+              <div className="text-yellow-100 text-xs">cUSD Balance</div>
+              <div className="text-yellow-300 text-lg font-bold">${Number(balance).toFixed(2)}</div>
+            </div>
+            <a
+              href={`https://explorer.celo.org/sepolia/address/${address}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-purple-600 hover:bg-purple-700 text-white py-1 px-3 text-xs font-bold rounded transition text-center"
+              title="View your achievements and transactions on-chain"
+            >
+              🏆 My Stats
+            </a>
           </div>
         )}
       </div>
@@ -105,10 +120,10 @@ export const GameUI: React.FC<GameUIProps> = ({ gameState, onReset, isConnected,
         </div>
       )}
 
-      {/* Game Over Screen */}
+      {/* Game Over Screen - Scrollable */}
       {gameState.gameOver && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/50 pointer-events-auto">
-          <div className="park-bench p-8 text-center max-w-sm">
+        <div className="absolute inset-0 flex items-center justify-center bg-black/50 pointer-events-auto overflow-y-auto">
+          <div className="park-bench p-8 text-center max-w-sm my-4 max-h-[90vh] overflow-y-auto">
             <div className="text-red-400 text-2xl mb-4">GAME OVER</div>
 
             <div className="mb-6 border-t-2 border-b-2 border-yellow-600 py-4">
@@ -157,6 +172,12 @@ export const GameUI: React.FC<GameUIProps> = ({ gameState, onReset, isConnected,
             {/* Play-to-Earn Rewards Section */}
             <RewardsSubmitter gameState={gameState} />
 
+            {/* Level Milestone Section */}
+            <LevelMilestone gameState={gameState} />
+
+            {/* Player Stats & Achievements */}
+            <PlayerStats gameState={gameState} />
+
             <div className="text-white text-xs mt-4 opacity-60">
               Arrow Keys or WASD to move • SPACE to pause
             </div>
@@ -164,24 +185,24 @@ export const GameUI: React.FC<GameUIProps> = ({ gameState, onReset, isConnected,
         </div>
       )}
 
-      {/* Bottom Controls */}
-      <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end pointer-events-auto">
-        {/* Instructions */}
-        <div className="text-white text-xs opacity-75">
-          <div>↑↓←→ WASD Move</div>
-          <div>SPACE Pause</div>
+      {/* Bottom Controls - Centered Instructions */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 pointer-events-auto">
+        {/* Instructions - More Visible */}
+        <div className="text-white text-sm font-bold bg-black/50 px-4 py-2 rounded border-2 border-green-500">
+          <div className="text-center">↑↓←→ WASD Move</div>
+          <div className="text-center">SPACE Pause</div>
         </div>
 
         {/* Connection Status */}
         <div className="wooden-sign text-center">
           <div className="text-xs">
-            {isConnected ? (
+            {isConnected && address ? (
               <>
-                <div className="text-green-300">✓ Connected</div>
-                <div className="text-yellow-100 text-xs">{address?.slice(0, 6)}...</div>
+                <div className="text-green-300 font-bold">✓ Connected</div>
+                <div className="text-yellow-100 text-xs">{address?.slice(0, 6)}...{address?.slice(-4)}</div>
               </>
             ) : (
-              <div className="text-red-300">✗ Not Connected</div>
+              <div className="text-red-400 font-bold">⚠ Wallet Not Connected</div>
             )}
           </div>
         </div>
@@ -192,13 +213,13 @@ export const GameUI: React.FC<GameUIProps> = ({ gameState, onReset, isConnected,
         <div className="absolute inset-0 sunset-filter pointer-events-none" />
       )}
 
-      {/* Mobile D-Pad Controls */}
-      <div className="absolute bottom-20 left-4 md:hidden pointer-events-auto">
-        <div className="relative w-32 h-32">
+      {/* Mobile D-Pad Controls - Centered & Enlarged */}
+      <div className="absolute bottom-1/4 left-1/2 -translate-x-1/2 md:hidden pointer-events-auto">
+        <div className="relative w-48 h-48">
           {/* Up Button */}
           <button
             onClick={() => handleDirectionClick('up')}
-            className="absolute top-0 left-1/2 -translate-x-1/2 w-10 h-10 bg-green-600 hover:bg-green-700 active:bg-green-800 rounded border-2 border-green-700 flex items-center justify-center text-white font-bold transition"
+            className="absolute top-0 left-1/2 -translate-x-1/2 w-14 h-14 bg-green-600 hover:bg-green-700 active:bg-green-800 rounded border-2 border-green-700 flex items-center justify-center text-white font-bold text-2xl transition"
           >
             ↑
           </button>
@@ -206,7 +227,7 @@ export const GameUI: React.FC<GameUIProps> = ({ gameState, onReset, isConnected,
           {/* Left Button */}
           <button
             onClick={() => handleDirectionClick('left')}
-            className="absolute top-1/2 left-0 -translate-y-1/2 w-10 h-10 bg-green-600 hover:bg-green-700 active:bg-green-800 rounded border-2 border-green-700 flex items-center justify-center text-white font-bold transition"
+            className="absolute top-1/2 left-0 -translate-y-1/2 w-14 h-14 bg-green-600 hover:bg-green-700 active:bg-green-800 rounded border-2 border-green-700 flex items-center justify-center text-white font-bold text-2xl transition"
           >
             ←
           </button>
@@ -214,7 +235,7 @@ export const GameUI: React.FC<GameUIProps> = ({ gameState, onReset, isConnected,
           {/* Down Button */}
           <button
             onClick={() => handleDirectionClick('down')}
-            className="absolute bottom-0 left-1/2 -translate-x-1/2 w-10 h-10 bg-green-600 hover:bg-green-700 active:bg-green-800 rounded border-2 border-green-700 flex items-center justify-center text-white font-bold transition"
+            className="absolute bottom-0 left-1/2 -translate-x-1/2 w-14 h-14 bg-green-600 hover:bg-green-700 active:bg-green-800 rounded border-2 border-green-700 flex items-center justify-center text-white font-bold text-2xl transition"
           >
             ↓
           </button>
@@ -222,7 +243,7 @@ export const GameUI: React.FC<GameUIProps> = ({ gameState, onReset, isConnected,
           {/* Right Button */}
           <button
             onClick={() => handleDirectionClick('right')}
-            className="absolute top-1/2 right-0 -translate-y-1/2 w-10 h-10 bg-green-600 hover:bg-green-700 active:bg-green-800 rounded border-2 border-green-700 flex items-center justify-center text-white font-bold transition"
+            className="absolute top-1/2 right-0 -translate-y-1/2 w-14 h-14 bg-green-600 hover:bg-green-700 active:bg-green-800 rounded border-2 border-green-700 flex items-center justify-center text-white font-bold text-2xl transition"
           >
             →
           </button>

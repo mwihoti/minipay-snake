@@ -33,7 +33,25 @@ export default function Home() {
   }, []);
 
   const handleReset = useCallback(() => {
-    setGameState(INITIAL_STATE);
+    // Create a fresh copy of INITIAL_STATE to avoid mutations
+    setGameState({
+      snake: [
+        { x: 10, y: 10 },
+        { x: 9, y: 10 },
+        { x: 8, y: 10 },
+      ],
+      food: { x: 15, y: 15 },
+      trees: [],
+      fence: [],
+      score: 0,
+      gameOver: false,
+      gamePaused: false,
+      sunsetMode: false,
+      direction: 'right',
+      nextDirection: 'right',
+      powerups: [],
+      particles: [],
+    });
   }, []);
 
   const handleDirectionChange = useCallback((direction: 'up' | 'down' | 'left' | 'right') => {
