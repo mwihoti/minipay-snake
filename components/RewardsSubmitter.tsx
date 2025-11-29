@@ -32,7 +32,7 @@ export const RewardsSubmitter: React.FC<RewardsSubmitterProps> = ({ gameState, o
   useEffect(() => {
     if (gameState.gameOver) {
       // Testnet: 0.009 cUSD per point (very small for testing)
-      // At 1000 points = 0.009 cUSD, which translates to 0.03 CELO level reward
+      // At 1000 points = 0.009 cUSD, which translates to 0.3 CELO level reward
       let reward = gameState.score * 0.009;
       
       if (gameState.sunsetMode) {

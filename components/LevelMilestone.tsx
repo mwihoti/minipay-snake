@@ -11,7 +11,7 @@ interface LevelMilestoneProps {
 }
 
 const LEVEL_TARGETS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-const REWARD_PER_LEVEL = '0.03'; // CELO (testnet reduced from 0.3)
+const REWARD_PER_LEVEL = '0.3'; // CELO per level
 const LEVEL_SCORE_THRESHOLD = 1000; // Score needed per level
 
 export const LevelMilestone: React.FC<LevelMilestoneProps> = ({ gameState, onLevelUp }) => {

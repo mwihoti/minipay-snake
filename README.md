@@ -93,10 +93,10 @@ Deploy to Vercel, Netlify, or your hosting provider.
 
 ## 💰 Reward System
 
-- **Base Reward**: 1 cUSD per 100 points
-- **Sunset Bonus**: +50% if unlocked
-- **Powerup Multiplier**: +25% for each active powerup
-- **Gas Fee**: ~0.001 cUSD (covered by fee abstraction)
+- **Level Rewards**: 0.3 CELO per level (1 level = 1000 points)
+- **Maximum Levels**: 10 levels total
+- **Total Potential Earnings**: 3.0 CELO
+- **Gas Fee**: Covered by MiniPay fee abstraction
 
 ## 🏗️ Architecture
 
