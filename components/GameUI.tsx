@@ -194,18 +194,7 @@ export const GameUI: React.FC<GameUIProps> = ({ gameState, onReset, isConnected,
         </div>
 
         {/* Connection Status */}
-        <div className="wooden-sign text-center">
-          <div className="text-xs">
-            {isConnected && address ? (
-              <>
-                <div className="text-green-300 font-bold">✓ Connected</div>
-                <div className="text-yellow-100 text-xs">{address?.slice(0, 6)}...{address?.slice(-4)}</div>
-              </>
-            ) : (
-              <div className="text-red-400 font-bold">⚠ Wallet Not Connected</div>
-            )}
-          </div>
-        </div>
+       
       </div>
 
       {/* Sunset Filter - visual effect */}
