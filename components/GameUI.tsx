@@ -93,8 +93,8 @@ export const GameUI: React.FC<GameUIProps> = ({ gameState, onReset, isConnected,
         {isConnected && address && (
           <div className="flex flex-col gap-2">
             <div className="wooden-sign text-right">
-              <div className="text-yellow-100 text-xs">cUSD Balance</div>
-              <div className="text-yellow-300 text-lg font-bold">${Number(balance).toFixed(2)}</div>
+              <div className="text-yellow-900 text-xs">cUSD/CELO Balance</div>
+              <div className="text-yellow-600 text-lg font-bold">${Number(balance).toFixed(2)}</div>
             </div>
             <a
               href={`https://explorer.celo.org/sepolia/address/${address}`}
