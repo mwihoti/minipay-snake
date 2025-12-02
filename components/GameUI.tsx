@@ -239,13 +239,13 @@ export const GameUI: React.FC<GameUIProps> = ({ gameState, onReset, onStartGame,
         <div className="absolute inset-0 sunset-filter pointer-events-none" />
       )}
 
-      {/* Mobile D-Pad Controls - Centered & Enlarged */}
-      <div className="absolute bottom-1/4 left-1/2 -translate-x-1/2 md:hidden pointer-events-auto">
-        <div className="relative w-48 h-48">
+      {/* Mobile D-Pad Controls - Below game canvas with more spacing */}
+      <div className="md:hidden pointer-events-auto">
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-64 h-64">
           {/* Up Button */}
           <button
             onClick={() => handleDirectionClick('up')}
-            className="absolute top-0 left-1/2 -translate-x-1/2 w-14 h-14 bg-green-600 hover:bg-green-700 active:bg-green-800 rounded border-2 border-green-700 flex items-center justify-center text-white font-bold text-2xl transition"
+            className="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-20 bg-green-600 hover:bg-green-700 active:bg-green-800 rounded-xl border-4 border-green-700 shadow-2xl flex items-center justify-center text-white font-bold text-3xl transition-all active:scale-95"
           >
             ↑
           </button>
@@ -253,7 +253,7 @@ export const GameUI: React.FC<GameUIProps> = ({ gameState, onReset, onStartGame,
           {/* Left Button */}
           <button
             onClick={() => handleDirectionClick('left')}
-            className="absolute top-1/2 left-0 -translate-y-1/2 w-14 h-14 bg-green-600 hover:bg-green-700 active:bg-green-800 rounded border-2 border-green-700 flex items-center justify-center text-white font-bold text-2xl transition"
+            className="absolute top-1/2 left-0 -translate-y-1/2 w-20 h-20 bg-green-600 hover:bg-green-700 active:bg-green-800 rounded-xl border-4 border-green-700 shadow-2xl flex items-center justify-center text-white font-bold text-3xl transition-all active:scale-95"
           >
             ←
           </button>
@@ -261,7 +261,7 @@ export const GameUI: React.FC<GameUIProps> = ({ gameState, onReset, onStartGame,
           {/* Down Button */}
           <button
             onClick={() => handleDirectionClick('down')}
-            className="absolute bottom-0 left-1/2 -translate-x-1/2 w-14 h-14 bg-green-600 hover:bg-green-700 active:bg-green-800 rounded border-2 border-green-700 flex items-center justify-center text-white font-bold text-2xl transition"
+            className="absolute bottom-0 left-1/2 -translate-x-1/2 w-20 h-20 bg-green-600 hover:bg-green-700 active:bg-green-800 rounded-xl border-4 border-green-700 shadow-2xl flex items-center justify-center text-white font-bold text-3xl transition-all active:scale-95"
           >
             ↓
           </button>
@@ -269,7 +269,7 @@ export const GameUI: React.FC<GameUIProps> = ({ gameState, onReset, onStartGame,
           {/* Right Button */}
           <button
             onClick={() => handleDirectionClick('right')}
-            className="absolute top-1/2 right-0 -translate-y-1/2 w-14 h-14 bg-green-600 hover:bg-green-700 active:bg-green-800 rounded border-2 border-green-700 flex items-center justify-center text-white font-bold text-2xl transition"
+            className="absolute top-1/2 right-0 -translate-y-1/2 w-20 h-20 bg-green-600 hover:bg-green-700 active:bg-green-800 rounded-xl border-4 border-green-700 shadow-2xl flex items-center justify-center text-white font-bold text-3xl transition-all active:scale-95"
           >
             →
           </button>

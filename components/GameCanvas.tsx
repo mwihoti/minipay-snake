@@ -49,7 +49,7 @@ export const GameCanvas: React.FC<CanvasProps> = ({ gameState, onStateChange, su
     const deltaX = touch.clientX - touchStartRef.current.x;
     const deltaY = touch.clientY - touchStartRef.current.y;
 
-    const minSwipeDistance = 30;
+    const minSwipeDistance = 15;
     const newState = { ...gameState };
 
     // Determine direction based on swipe

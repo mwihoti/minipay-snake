@@ -96,14 +96,7 @@ export function getRandomPowerup(pos: Position): Powerup {
 export function updateGameState(state: GameState): GameState {
   if (state.gameOver || state.gamePaused || !state.gameStarted) return state;
 
-  // Deep copy to avoid mutations
-  const newState: GameState = {
-    ...state,
-    snake: [...state.snake],
-    trees: [...state.trees],
-    powerups: [...state.powerups],
-    particles: [...state.particles],
-  };
+  const newState = { ...state };
   newState.direction = state.nextDirection;
 
   // Calculate new head position
