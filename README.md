@@ -2,6 +2,7 @@
 
 A progressive, park-themed snake game built for MiniPay on the Celo blockchain. Earn **CELO rewards** by reaching level milestones!
 
+Deployed Link: https://minipay-snake-nwn0ac22j-mwihotis-projects.vercel.app 
 ## ✨ Features
 
 ### 🎮 Game Mechanics
