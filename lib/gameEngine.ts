@@ -15,6 +15,7 @@ export interface GameState {
   score: number;
   gameOver: boolean;
   gamePaused: boolean;
+  gameStarted: boolean;
   sunsetMode: boolean;
   direction: 'up' | 'down' | 'left' | 'right';
   nextDirection: 'up' | 'down' | 'left' | 'right';
@@ -48,6 +49,7 @@ export const INITIAL_STATE: GameState = {
   food: { x: 15, y: 15 },
   trees: [],
   fence: [],
+  gameStarted: false,
   score: 0,
   gameOver: false,
   gamePaused: false,
@@ -92,9 +94,16 @@ export function getRandomPowerup(pos: Position): Powerup {
 }
 
 export function updateGameState(state: GameState): GameState {
-  if (state.gameOver || state.gamePaused) return state;
+  if (state.gameOver || state.gamePaused || !state.gameStarted) return state;
 
-  const newState = { ...state };
+  // Deep copy to avoid mutations
+  const newState: GameState = {
+    ...state,
+    snake: [...state.snake],
+    trees: [...state.trees],
+    powerups: [...state.powerups],
+    particles: [...state.particles],
+  };
   newState.direction = state.nextDirection;
 
   // Calculate new head position

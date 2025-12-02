@@ -46,12 +46,17 @@ export default function Home() {
       score: 0,
       gameOver: false,
       gamePaused: false,
+      gameStarted: false,
       sunsetMode: false,
       direction: 'right',
       nextDirection: 'right',
       powerups: [],
       particles: [],
     });
+  }, []);
+
+  const handleStartGame = useCallback(() => {
+    setGameState(prev => ({ ...prev, gameStarted: true }));
   }, []);
 
   const handleDirectionChange = useCallback((direction: 'up' | 'down' | 'left' | 'right') => {
@@ -73,6 +78,7 @@ export default function Home() {
         <GameUI
           gameState={gameState}
           onReset={handleReset}
+          onStartGame={handleStartGame}
           isConnected={isConnected}
           onDirectionChange={handleDirectionChange}
           onPauseToggle={handlePauseToggle}

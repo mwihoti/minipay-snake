@@ -31,11 +31,14 @@ export async function fetchOnChainClaims(
     const claims: OnChainClaim[] = [];
 
     for (const event of events) {
+      // Type guard to check if event is an EventLog with args
+      if (!('args' in event)) continue;
+      
       const block = await event.getBlock();
       
       claims.push({
-        level: Number(event.args?.[1] || 0),
-        reward: ethers.formatEther(event.args?.[2] || 0),
+        level: Number(event.args[1] || 0),
+        reward: ethers.formatEther(event.args[2] || 0),
         txHash: event.transactionHash,
         blockNumber: event.blockNumber,
         timestamp: block.timestamp * 1000, // Convert to milliseconds

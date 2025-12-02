@@ -12,12 +12,13 @@ import { PlayerStats } from './PlayerStats';
 interface GameUIProps {
   gameState: GameState;
   onReset: () => void;
+  onStartGame: () => void;
   isConnected: boolean;
   onDirectionChange?: (direction: 'up' | 'down' | 'left' | 'right') => void;
   onPauseToggle?: () => void;
 }
 
-export const GameUI: React.FC<GameUIProps> = ({ gameState, onReset, isConnected, onDirectionChange, onPauseToggle }) => {
+export const GameUI: React.FC<GameUIProps> = ({ gameState, onReset, onStartGame, isConnected, onDirectionChange, onPauseToggle }) => {
   const [address, setAddress] = useState<string | null>(null);
   const [balance, setBalance] = useState<string>('0');
   const [submitting, setSubmitting] = useState(false);
@@ -65,10 +66,46 @@ export const GameUI: React.FC<GameUIProps> = ({ gameState, onReset, isConnected,
   };
 
   return (
-    <div className="fixed inset-0 pointer-events-none">
-      {/* Top HUD */}
-      <div className="absolute top-4 left-4 right-4 flex justify-between items-start pointer-events-auto z-10">
-        {/* Wallet Connection - Top Right */}
+    <>
+      {/* Start Game Overlay - Completely separate from other UI */}
+      {!gameState.gameStarted && !gameState.gameOver && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[9999] pointer-events-auto backdrop-blur-sm">
+          <div className="text-center space-y-6 px-6">
+            <div className="mb-8">
+              <h1 className="text-6xl md:text-8xl font-bold text-green-400 mb-2 drop-shadow-lg animate-pulse">
+                🐍 PARK SNAKE
+              </h1>
+              <p className="text-xl md:text-2xl text-white font-semibold drop-shadow">
+                Play • Earn • Repeat
+              </p>
+            </div>
+            
+            <button
+              onClick={onStartGame}
+              className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 active:from-green-700 active:to-green-800 text-white text-2xl md:text-3xl font-bold py-6 px-12 rounded-2xl shadow-2xl transform hover:scale-105 active:scale-95 transition-all duration-200 border-4 border-green-400 cursor-pointer"
+            >
+              🎮 START GAME
+            </button>
+            
+            <div className="text-white/80 text-sm md:text-base space-y-2 mt-8">
+              <p>🎯 Collect food to grow and score points</p>
+              <p>🌳 Avoid trees and yourself</p>
+              <p>💰 Earn 0.3 CELO per level milestone</p>
+              <p className="text-yellow-300 font-semibold">🌅 Unlock Sunset Mode at 1,000 points!</p>
+            </div>
+            
+            <div className="text-white/60 text-xs md:text-sm mt-6">
+              <p>Controls: Arrow Keys or WASD | Mobile: Swipe</p>
+              <p>Space: Pause | ESC: Stats</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="fixed inset-0 pointer-events-none">
+        {/* Top HUD */}
+        <div className="absolute top-4 left-4 right-4 flex justify-between items-start pointer-events-auto z-10">
+          {/* Wallet Connection - Top Right */}
         <div className="absolute -top-4 -right-4">
           <WalletConnect />
         </div>
@@ -93,8 +130,8 @@ export const GameUI: React.FC<GameUIProps> = ({ gameState, onReset, isConnected,
         {isConnected && address && (
           <div className="flex flex-col gap-2">
             <div className="wooden-sign text-right">
-              <div className="text-yellow-900 text-xs">cUSD/CELO Balance</div>
-              <div className="text-yellow-600 text-lg font-bold">${Number(balance).toFixed(2)}</div>
+              <div className="text-blue-900 text-xs">cUSD/CELO Balance</div>
+              <div className="text-blue-600 text-lg font-bold">${Number(balance).toFixed(2)}</div>
             </div>
             <a
               href={`https://explorer.celo.org/sepolia/address/${address}`}
@@ -255,5 +292,6 @@ export const GameUI: React.FC<GameUIProps> = ({ gameState, onReset, isConnected,
         <div className="absolute inset-0 sunset-filter pointer-events-none" />
       )}
     </div>
+    </>
   );
 };

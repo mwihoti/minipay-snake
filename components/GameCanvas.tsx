@@ -22,6 +22,14 @@ export const GameCanvas: React.FC<CanvasProps> = ({ gameState, onStateChange, su
   const gameLoopRef = useRef<number | null>(null);
   const speedRef = useRef(10);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+  const gameStateRef = useRef<GameState>(gameState);
+  const onStateChangeRef = useRef(onStateChange);
+
+  // Keep refs in sync with props
+  useEffect(() => {
+    gameStateRef.current = gameState;
+    onStateChangeRef.current = onStateChange;
+  }, [gameState, onStateChange]);
 
   // Adjust speed based on sunset mode
   useEffect(() => {
@@ -234,20 +242,22 @@ export const GameCanvas: React.FC<CanvasProps> = ({ gameState, onStateChange, su
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    const currentState = gameStateRef.current;
+
     // Clear and draw background
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawParallaxBackground(ctx);
 
     // Draw game elements
-    drawFence(ctx, gameState.fence);
-    drawTrees(ctx, gameState.trees);
-    drawFood(ctx, gameState.food);
-    drawPowerups(ctx, gameState.powerups);
-    drawSnake(ctx, gameState.snake);
-    drawParticles(ctx, gameState.particles);
+    drawFence(ctx, currentState.fence);
+    drawTrees(ctx, currentState.trees);
+    drawFood(ctx, currentState.food);
+    drawPowerups(ctx, currentState.powerups);
+    drawSnake(ctx, currentState.snake);
+    drawParticles(ctx, currentState.particles);
 
     // Sunset overlay
-    if (sunsetMode) {
+    if (currentState.sunsetMode) {
       const radialGradient = ctx.createRadialGradient(
         canvas.width / 2,
         canvas.height / 2,
@@ -268,21 +278,23 @@ export const GameCanvas: React.FC<CanvasProps> = ({ gameState, onStateChange, su
     let frameCount = 0;
 
     const gameLoop = () => {
+      const currentState = gameStateRef.current;
       frameCount++;
 
-      // Update game state at fixed intervals
-      if (frameCount % speedRef.current === 0) {
-        const newState = updateGameState(gameState);
+      // Only update game state if game has started
+      if (currentState.gameStarted && frameCount % speedRef.current === 0) {
+        const newState = updateGameState(currentState);
 
-        if (newState.gameOver && !gameState.gameOver) {
+        if (newState.gameOver && !currentState.gameOver) {
           audioManager.playGameOver();
-        } else if (newState.sunsetMode && !gameState.sunsetMode) {
+        } else if (newState.sunsetMode && !currentState.sunsetMode) {
           audioManager.playSunsetUnlock();
         }
 
-        onStateChange(newState);
+        onStateChangeRef.current(newState);
       }
 
+      // Always draw (to show initial state)
       draw();
       gameLoopRef.current = requestAnimationFrame(gameLoop);
     };
@@ -292,46 +304,54 @@ export const GameCanvas: React.FC<CanvasProps> = ({ gameState, onStateChange, su
     return () => {
       if (gameLoopRef.current) cancelAnimationFrame(gameLoopRef.current);
     };
-  }, [gameState, onStateChange]);
+  }, []); // Empty dependency array - only run once!
 
   // Keyboard controls
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      const newState = { ...gameState };
+      const currentState = gameStateRef.current;
+      const newState = { ...currentState };
+
+      // Start game on any arrow key or WASD if not started
+      if (!currentState.gameStarted && !currentState.gameOver) {
+        if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'w', 'a', 's', 'd'].includes(e.key.toLowerCase())) {
+          newState.gameStarted = true;
+        }
+      }
 
       switch (e.key.toLowerCase()) {
         case 'arrowup':
         case 'w':
-          if (gameState.direction !== 'down') newState.nextDirection = 'up';
+          if (currentState.direction !== 'down') newState.nextDirection = 'up';
           e.preventDefault();
           break;
         case 'arrowdown':
         case 's':
-          if (gameState.direction !== 'up') newState.nextDirection = 'down';
+          if (currentState.direction !== 'up') newState.nextDirection = 'down';
           e.preventDefault();
           break;
         case 'arrowleft':
         case 'a':
-          if (gameState.direction !== 'right') newState.nextDirection = 'left';
+          if (currentState.direction !== 'right') newState.nextDirection = 'left';
           e.preventDefault();
           break;
         case 'arrowright':
         case 'd':
-          if (gameState.direction !== 'left') newState.nextDirection = 'right';
+          if (currentState.direction !== 'left') newState.nextDirection = 'right';
           e.preventDefault();
           break;
         case ' ':
-          newState.gamePaused = !gameState.gamePaused;
+          newState.gamePaused = !currentState.gamePaused;
           e.preventDefault();
           break;
       }
 
-      onStateChange(newState);
+      onStateChangeRef.current(newState);
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [gameState, onStateChange]);
+  }, []); // Empty dependency array - only run once!
 
   // Set canvas size
   useEffect(() => {
