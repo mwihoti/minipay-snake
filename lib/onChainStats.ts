@@ -31,6 +31,9 @@ export async function fetchOnChainClaims(
     const claims: OnChainClaim[] = [];
 
     for (const event of events) {
+      // Type guard: check if event has args property
+      if (!('args' in event)) continue;
+      
       const block = await event.getBlock();
       
       claims.push({
